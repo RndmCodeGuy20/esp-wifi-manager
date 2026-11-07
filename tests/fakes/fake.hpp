@@ -87,7 +87,10 @@ using TickType_t = uint32_t;
 #define pdFALSE 0
 #define pdPASS 1
 #define portMAX_DELAY UINT32_MAX
-#define pdMS_TO_TICKS(x) (x)
+#ifndef FAKE_TICK_PERIOD_MS
+#define FAKE_TICK_PERIOD_MS 1
+#endif
+#define pdMS_TO_TICKS(x) ((x) / FAKE_TICK_PERIOD_MS)
 struct Task;
 struct Queue;
 struct Semaphore;
@@ -112,6 +115,7 @@ void xSemaphoreGive(SemaphoreHandle_t);
 void vSemaphoreDelete(SemaphoreHandle_t);
 namespace fake {
 extern std::atomic<int> connects, stops, resources;
+extern std::atomic<int> delay_calls, zero_tick_delays;
 extern std::atomic<int64_t> time;
 extern std::atomic<int> connect_error, ipv6_error, stop_error, disconnect_error,
     random_calls;

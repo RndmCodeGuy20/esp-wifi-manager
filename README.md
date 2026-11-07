@@ -152,7 +152,8 @@ cmake --build build/host --parallel
 ctest --test-dir build/host --output-on-failure
 ```
 
-CI runs ASAN/UBSAN, a separate TSan job, GCC coverage, a C public-header check,
+CI runs the adapter suite at 100 Hz and 1000 Hz tick rates, ASAN/UBSAN, a separate
+TSan job, GCC coverage, a C public-header check,
 and an ESP32-S3 firmware build. Core coverage must reach **95% lines / 90%
 branches**; adapter coverage is reported separately. Reports are uploaded as
 workflow artifacts. Checkout and artifact actions use current release versions;

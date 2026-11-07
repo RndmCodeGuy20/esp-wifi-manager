@@ -505,7 +505,8 @@ esp_err_t wifi_manager_wait_ready(wifi_manager_handle_t m, uint32_t timeout) {
       return ESP_ERR_INVALID_STATE;
     if (now_ms() - start >= timeout)
       return ESP_ERR_TIMEOUT;
-    vTaskDelay(pdMS_TO_TICKS(1));
+    const TickType_t delay_ticks = pdMS_TO_TICKS(1);
+    vTaskDelay(delay_ticks ? delay_ticks : 1);
   }
 }
 esp_err_t wifi_manager_stop(wifi_manager_handle_t m) {

@@ -5,11 +5,11 @@
 | Check | Measured result |
 |---|---|
 | Policy tests | Seven groups pass |
-| Production adapter with threaded ESP/FreeRTOS fakes | Twelve groups pass |
-| AddressSanitizer + UndefinedBehaviorSanitizer | Both host test targets pass |
+| Production adapter with threaded ESP/FreeRTOS fakes | Thirteen groups pass at both 100 Hz and 1000 Hz |
+| AddressSanitizer + UndefinedBehaviorSanitizer | All three host test targets pass |
 | ThreadSanitizer | Adapter concurrency suite passes |
 | LLVM core coverage | 98.56% lines / 93.40% branch outcomes |
-| LLVM adapter coverage | 92.26% lines / 81.65% branch outcomes |
+| LLVM adapter coverage | 92.70% lines / 82.09% branch outcomes |
 | ESP32-S3 standalone example | Builds with the installed ESP-IDF 5.4-derived toolchain |
 | First consumer (mini_dns) | Firmware builds; 60 host tests pass |
 
@@ -18,6 +18,16 @@ checkout with Xtensa GCC 14.2. They are not a claim of hardware qualification.
 Hosted results are available in the repository's
 [CI runs](https://github.com/rndmcodeguy20/esp-wifi-manager/actions/workflows/ci.yml).
 Download a run's coverage artifact for its GCC/gcovr measurements.
+
+The [initial hosted run](https://github.com/RndmCodeGuy20/esp-wifi-manager/actions/runs/42393440559)
+passed all jobs, including the ESP-IDF container firmware build. Its GCC/gcovr
+report measured core coverage at 98.4% lines / 92.9% branches and adapter coverage
+at 91.5% / 66.7%. That run predates the added coarse-tick readiness regression;
+use newer run artifacts for measurements of later revisions.
+
+The readiness regression first failed at a simulated 100 Hz tick rate because
+`pdMS_TO_TICKS(1)` became zero. Clamping the wait to at least one tick fixed it;
+the 100 Hz and 1000 Hz suites now both pass with ASAN/UBSAN and TSan.
 
 ## Reproduce
 

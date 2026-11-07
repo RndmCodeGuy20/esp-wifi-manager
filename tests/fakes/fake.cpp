@@ -41,6 +41,7 @@ std::vector<Task *> tasks;
 } // namespace
 namespace fake {
 std::atomic<int> connects{0}, stops{0}, resources{0};
+std::atomic<int> delay_calls{0}, zero_tick_delays{0};
 std::atomic<int64_t> time{0};
 std::atomic<int> connect_error{0}, ipv6_error{0}, stop_error{0},
     disconnect_error{0}, random_calls{0};
@@ -64,6 +65,8 @@ void reset() {
   connects = 0;
   stops = 0;
   time = 0;
+  delay_calls = 0;
+  zero_tick_delays = 0;
   connect_error = 0;
   ipv6_error = 0;
   stop_error = 0;
@@ -111,7 +114,12 @@ uint32_t ulTaskNotifyTake(int, uint32_t wait) {
   t->notifications = 0;
   return n;
 }
-void vTaskDelay(uint32_t) { std::this_thread::yield(); }
+void vTaskDelay(uint32_t ticks) {
+  ++fake::delay_calls;
+  if (ticks == 0)
+    ++fake::zero_tick_delays;
+  std::this_thread::yield();
+}
 QueueHandle_t xQueueCreate(size_t cap, size_t size) {
   if (!ok())
     return nullptr;

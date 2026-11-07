@@ -321,8 +321,24 @@ void saved_credentials() {
   destroy(m);
 }
 
+void wait_ready_blocks_for_at_least_one_tick() {
+  fake::reset();
+  auto m = create();
+  auto c = credentials();
+  assert(wifi_manager_start(m, &c, WIFI_MANAGER_STORAGE_RAM) == ESP_OK);
+  std::atomic<int> result{ESP_FAIL};
+  std::thread waiter([&] { result = wifi_manager_wait_ready(m, 100); });
+  eventually([&] { return fake::delay_calls > 0; });
+  ready(m);
+  waiter.join();
+  assert(result == ESP_OK);
+  assert(fake::zero_tick_delays == 0);
+  destroy(m);
+}
+
 } // namespace
 int main() {
+  wait_ready_blocks_for_at_least_one_tick();
   saved_credentials();
   ownership();
   missing_disconnect();
@@ -335,7 +351,7 @@ int main() {
   deadlines();
   immediate();
   reentrancy();
-  std::puts("12 adapter groups passed: missing disconnect, failures, overflow, "
+  std::puts("13 adapter groups passed: tick-safe wait, missing disconnect, failures, overflow, "
             "stop race, validation, allocations, lifecycle, deadline barrier, "
             "immediate errors/RNG rejection, callback reentrancy");
 }
