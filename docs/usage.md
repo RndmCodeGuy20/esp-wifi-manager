@@ -1,5 +1,9 @@
 # Project integration guide
 
+Supported SDK range: ESP-IDF `>=5.4,<5.6`. Firmware CI builds ESP32-S3 with
+the 5.4 line and pinned 5.5.6; local 5.5.6 compilation does not establish
+hardware qualification.
+
 ## Local development
 
 Keep the checkout named `esp-wifi-manager`. For an external checkout, add its
@@ -57,6 +61,11 @@ Supported inputs:
 | Open network | Empty password and `allow_open = true` |
 | Raw 64-character hexadecimal PSK | Unsupported |
 | WPA-Enterprise credentials | Unsupported |
+
+Explicit credentials with a nonempty password set `threshold.authmode` to
+`WIFI_AUTH_WPA2_PSK`, preserving a WPA2 minimum. An empty password is rejected
+unless `allow_open = true`; that explicit open-network path sets
+`WIFI_AUTH_OPEN`. Saved configurations retain their existing driver threshold.
 
 Saved open networks require explicit credential input with open-network opt-in;
 they are not accepted by the NULL-credential path. Changing the storage setting

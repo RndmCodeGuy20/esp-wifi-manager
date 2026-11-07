@@ -445,6 +445,8 @@ esp_err_t wifi_manager_start(wifi_manager_handle_t m,
     return e;
   wifi_config_t wc{};
   if (credentials) {
+    wc.sta.threshold.authmode = credentials->password_len ? WIFI_AUTH_WPA2_PSK
+                                                        : WIFI_AUTH_OPEN;
     std::memcpy(wc.sta.ssid, credentials->ssid, credentials->ssid_len);
     std::memcpy(wc.sta.password, credentials->password,
                 credentials->password_len);

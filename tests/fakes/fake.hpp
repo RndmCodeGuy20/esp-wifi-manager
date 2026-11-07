@@ -44,10 +44,15 @@ struct wifi_event_sta_disconnected_t {
 struct wifi_init_config_t {};
 #define WIFI_INIT_CONFIG_DEFAULT()                                             \
   wifi_init_config_t {}
+enum wifi_auth_mode_t { WIFI_AUTH_OPEN = 0, WIFI_AUTH_WPA2_PSK = 3 };
 struct wifi_config_t {
   struct {
     uint8_t ssid[32];
     uint8_t password[64];
+    struct {
+      int8_t rssi;
+      wifi_auth_mode_t authmode;
+    } threshold;
   } sta;
 };
 #define WIFI_IF_STA 0

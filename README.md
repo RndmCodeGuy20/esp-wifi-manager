@@ -2,14 +2,15 @@
 
 [![CI](https://github.com/rndmcodeguy20/esp-wifi-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/rndmcodeguy20/esp-wifi-manager/actions/workflows/ci.yml)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![ESP-IDF](https://img.shields.io/badge/ESP--IDF-5.4-orange.svg)](https://docs.espressif.com/projects/esp-idf/en/release-v5.4/esp32s3/)
+[![ESP-IDF](https://img.shields.io/badge/ESP--IDF-5.4–5.5-orange.svg)](https://docs.espressif.com/projects/esp-idf/en/release-v5.4/esp32s3/)
 
 Connect, recover, and hand control back to your application. A reusable ESP-IDF
 station connection manager with a C API, nonblocking retries, bounded connection
 waits, and explicit lifecycle control.
 
-Built for **ESP-IDF 5.4.x**; firmware CI targets **ESP32-S3**. Other SDK versions
-and targets have not been qualified. This is an early release; hardware soak
+Supports **ESP-IDF >=5.4,<5.6**; firmware CI targets **ESP32-S3** on the
+5.4 line and pinned 5.5.6. The standalone example is locally build-tested on
+5.5.6. Other SDK versions and targets have not been qualified. This is an early release; hardware soak
 qualification is still pending.
 
 ## What it handles
@@ -31,10 +32,10 @@ Create or extend your application's `main/idf_component.yml`:
 
 ```yaml
 dependencies:
-  idf: ">=5.4,<5.5"
+  idf: ">=5.4,<5.6"
   esp-wifi-manager:
     git: https://github.com/rndmcodeguy20/esp-wifi-manager.git
-    version: v0.1.0
+    version: v0.1.1
 ```
 
 Add the component to your `main/CMakeLists.txt` requirements:
@@ -100,7 +101,7 @@ is a complete buildable application:
 ```sh
 git clone https://github.com/rndmcodeguy20/esp-wifi-manager.git
 cd esp-wifi-manager
-# Activate an ESP-IDF 5.4 environment first.
+# Activate an supported ESP-IDF 5.4 or 5.5 environment first.
 idf.py -C examples/station set-target esp32s3
 idf.py -C examples/station build
 ```
@@ -139,7 +140,9 @@ application stop/restart.
    the manager or its driver resources.
 
 SSID/passphrase embedded NUL bytes, raw hexadecimal PSKs, and enterprise
-authentication are unsupported. Open networks require explicit opt-in. After
+authentication are unsupported. Explicit protected credentials set the driver minimum authentication mode to
+WPA2-PSK. Open networks require an empty password and explicit opt-in, and set
+the threshold to OPEN. After
 RAM-only use, supply explicit credentials to restart or recreate the manager
 before loading saved credentials; RAM credentials are never silently persisted.
 See [credential storage and provisioning](docs/usage.md#credentials-and-storage).
@@ -154,7 +157,7 @@ ctest --test-dir build/host --output-on-failure
 
 CI runs the adapter suite at 100 Hz and 1000 Hz tick rates, ASAN/UBSAN, a separate
 TSan job, GCC coverage, a C public-header check,
-and an ESP32-S3 firmware build. Core coverage must reach **95% lines / 90%
+and ESP32-S3 firmware builds on ESP-IDF 5.4 and 5.5.6. Core coverage must reach **95% lines / 90%
 branches**; adapter coverage is reported separately. Reports are uploaded as
 workflow artifacts. Checkout and artifact actions use current release versions;
 Dependabot checks GitHub Actions updates weekly.

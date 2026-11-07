@@ -59,6 +59,7 @@ void lifecycle() {
   auto c = credentials();
   assert(wifi_manager_start(m, &c, WIFI_MANAGER_STORAGE_RAM) == 0);
   assert(fake::storage == WIFI_STORAGE_RAM);
+  assert(fake::active.sta.threshold.authmode == WIFI_AUTH_WPA2_PSK);
   assert(std::memcmp(fake::active.sta.ssid, c.ssid, 32) == 0);
   assert(wifi_manager_start(m, &c, WIFI_MANAGER_STORAGE_RAM) ==
          ESP_ERR_INVALID_STATE);
@@ -149,8 +150,10 @@ void validation() {
   c.password_len = 0;
   assert(wifi_manager_start(m, &c, WIFI_MANAGER_STORAGE_RAM) ==
          ESP_ERR_INVALID_ARG);
+  assert(fake::active.sta.ssid[0] == 0);
   c.allow_open = true;
   assert(wifi_manager_start(m, &c, WIFI_MANAGER_STORAGE_RAM) == 0);
+  assert(fake::active.sta.threshold.authmode == WIFI_AUTH_OPEN);
   assert(wifi_manager_wait_ready(m, 0) == ESP_ERR_TIMEOUT);
   destroy(m);
 }

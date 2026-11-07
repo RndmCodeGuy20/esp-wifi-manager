@@ -30,7 +30,10 @@ jobs:
   firmware:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    container: espressif/idf:release-v5.4
+    strategy:
+      matrix:
+        idf-image: [espressif/idf:release-v5.4, espressif/idf:v5.5.6]
+    container: ${{ matrix.idf-image }}
     steps:
       - uses: actions/checkout@v7.0.1
       - name: Build standalone station example

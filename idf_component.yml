@@ -1,4 +1,4 @@
-version: "0.1.0"
+version: "0.1.1"
 description: "ESP-IDF station connection manager with nonblocking recovery and explicit lifecycle"
 license: "MIT"
 url: "https://github.com/rndmcodeguy20/esp-wifi-manager"
@@ -6,4 +6,4 @@ repository: "https://github.com/rndmcodeguy20/esp-wifi-manager.git"
 documentation: "https://github.com/rndmcodeguy20/esp-wifi-manager#readme"
 issues: "https://github.com/rndmcodeguy20/esp-wifi-manager/issues"
 dependencies:
-  idf: ">=5.4,<5.5"
+  idf: ">=5.4,<5.6"

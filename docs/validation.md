@@ -1,6 +1,23 @@
 # Validation
 
-## Local baseline — 2026-11-07
+## 0.1.1 compatibility verification — 2026-11-07
+
+The declared SDK range is `>=5.4,<5.6`. CI firmware builds cover the 5.4 line
+and pinned 5.5.6 on ESP32-S3. The public C API is unchanged.
+
+The explicit-credential regression failed before the fix at both 100 Hz and
+1000 Hz because the driver authentication threshold was OPEN for protected
+credentials. Both suites now verify WPA2-PSK for protected credentials, rejection
+of open credentials without opt-in, and OPEN for explicitly allowed open input.
+Normal, ASAN/UBSAN and TSan host runs each pass all three targets. LLVM coverage
+measures core 98.56% lines / 93.40% branch outcomes and adapter 92.74% / 82.59%.
+
+The standalone station example builds locally for ESP32-S3 with installed
+ESP-IDF 5.5.6 (Xtensa GCC 14.2), using an isolated build directory and explicit
+`IDF_TARGET=esp32s3`. This verifies compilation against real SDK headers.
+No new hardware, router recovery or live network qualification was performed.
+
+## Previous local baseline — 2026-11-07
 
 | Check | Measured result |
 |---|---|
@@ -45,7 +62,7 @@ bash scripts/coverage.sh
 # Or Clang + LLVM tools:
 CXX=clang++ bash scripts/coverage-llvm.sh
 
-# Activate ESP-IDF 5.4 first:
+# Activate supported ESP-IDF 5.4 or 5.5 first:
 idf.py -C examples/station set-target esp32s3
 idf.py -C examples/station build
 ```
