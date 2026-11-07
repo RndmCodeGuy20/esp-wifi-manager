@@ -1,0 +1,19 @@
+build*/
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock
+__pycache__/
+.superpowers/
+coverage/
+*.profraw
+*.profdata
+.idea/
+.vscode/
+.DS_Store
+.codegraph/
+# Local design/review notes are retained locally, outside the public package.
+docs/*-design.md
+docs/*-report.md
+docs/*-review.md
+docs/implementation-plan.md

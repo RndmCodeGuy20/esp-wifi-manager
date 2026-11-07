@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.16)
+get_filename_component(WIFI_MANAGER_COMPONENT_DIR "../.." ABSOLUTE)
+set(EXTRA_COMPONENT_DIRS "${WIFI_MANAGER_COMPONENT_DIR}")
+include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+project(wifi_manager_station)

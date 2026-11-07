@@ -1,0 +1,50 @@
+name: Component CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  host:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Configure sanitized host tests
+        run: cmake -S tests -B build/sanitize -DENABLE_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug
+      - run: cmake --build build/sanitize --parallel
+      - run: ctest --test-dir build/sanitize --output-on-failure
+      - name: Install coverage tooling
+        run: pipx install gcovr==8.3
+      - name: Measure core and adapter separately
+        run: bash scripts/coverage.sh
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: coverage
+          path: coverage/
+  firmware:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container: espressif/idf:release-v5.4
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Build standalone station example
+        shell: bash
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py -C examples/station set-target esp32s3
+          idf.py -C examples/station build
+  threads:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Configure thread sanitizer
+        run: cmake -S tests -B build/threads -DENABLE_TSAN=ON -DCMAKE_BUILD_TYPE=Debug
+      - run: cmake --build build/threads --parallel
+      - run: ctest --test-dir build/threads --output-on-failure
