@@ -61,6 +61,8 @@ is measured and reported separately. Vendor code, fakes, tests and header-only
 accessors are outside those denominators. There are no source exclusions. LLVM
 and GCC can count branches differently; use the report from the compiler used by
 your run rather than comparing their percentages as identical measurements.
+GCC coverage builds explicitly use atomic profiling counters, so concurrent
+worker/status-reader execution cannot lose counter updates during collection.
 
 The suite covers credential byte limits, retry caps/jitter, stable-reset timing,
 association/IP deadlines, stale work, stop/restart, driver ownership, partial

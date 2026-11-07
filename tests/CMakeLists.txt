@@ -10,6 +10,11 @@ endif()
 if(ENABLE_COVERAGE)
  add_compile_options(--coverage -O0 -g)
  add_link_options(--coverage)
+ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # Adapter tests update shared-function counters from multiple threads.
+  # Non-atomic gcov updates can produce impossible negative hit counts.
+  add_compile_options(-fprofile-update=atomic)
+ endif()
 endif()
 enable_testing()
 add_library(check_c_header OBJECT test_header.c)
